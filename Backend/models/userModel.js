@@ -1,4 +1,3 @@
-// userModel.js - revised
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -23,6 +22,24 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      default: 'Point'
+    },
+    coordinates: {
+      type: [Number], 
+      required: true
+    }
+  },
+  address: {
+    type: String,
+    required: true
+  },
+  contactNumber: {
+    type: String
+  },
   isVerified: {
     type: Boolean,
     default: false
@@ -30,14 +47,11 @@ const userSchema = new mongoose.Schema({
   otp: {
     code: String,
     expiresAt: Date
-  },
-  resetPasswordToken: String,
-  resetPasswordExpires: Date
+  }
 }, 
 { timestamps: true });
 
-userSchema.index({ email: 1, restaurantId: 1 }, { unique: true });
-
-userSchema.index({ email: 1, outletName: 1 }, { unique: true });
+// Create a geospatial index
+userSchema.index({ location: '2dsphere' });
 
 module.exports = mongoose.model('User', userSchema);
