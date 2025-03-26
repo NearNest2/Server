@@ -88,9 +88,52 @@ const sendPasswordResetOTP = async (email, otp) => {
 };
 
 const userController = {
+  searchNearbyRestaurants: async (req, res) => {
+    try {
+      const { latitude, longitude, maxDistance = 30000 } = req.body; // maxDistance in meters (30km)
+
+      const nearbyRestaurants = await Restaurant.find({
+        isVerified: true,
+        location: {
+          $near: {
+            $geometry: {
+              type: 'Point',
+              coordinates: [longitude, latitude]
+            },
+            $maxDistance: maxDistance // 30km radius
+          }
+        }
+      }).select('restaurantName outletName address contactNumber location');
+
+      res.status(200).json({
+        success: true,
+        count: nearbyRestaurants.length,
+        data: nearbyRestaurants
+      });
+    } catch (error) {
+      console.error('Error searching nearby restaurants:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error searching nearby restaurants',
+        error: error.message
+      });
+    }
+  },
+
+  // Update signup to include location
   signUp: async (req, res) => {
     try {
-      const { email, password, restaurantName, outletName } = req.body;
+      const { 
+        email, 
+        password, 
+        restaurantName, 
+        outletName, 
+        latitude, 
+        longitude,
+        address,
+        contactNumber 
+      } = req.body;
+
       
       const existingOutlet = await Restaurant.findOne({ 
         email,
