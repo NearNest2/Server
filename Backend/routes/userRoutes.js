@@ -18,6 +18,7 @@ router.post('/select-outlet', userController.selectOutlet);
 router.post('/available-outlets', userController.getAvailableOutlets);
 router.post('/auto-login', autoLogin); 
 router.post('/account/delete', userController.deleteAccount);
+router.post('/nearby-restaurants', userController.searchNearbyRestaurants);
 
 router.get('/restaurant/:restaurantId', userController.getRestaurantPublicInfo);
 
