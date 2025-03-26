@@ -121,7 +121,7 @@ const userController = {
   },
 
   // Update signup to include location
-  signUp: async (req, res) => {
+signUp: async (req, res) => {
     try {
       const { 
         email, 
@@ -134,7 +134,6 @@ const userController = {
         contactNumber 
       } = req.body;
 
-      
       const existingOutlet = await Restaurant.findOne({ 
         email,
         restaurantName,
@@ -158,6 +157,12 @@ const userController = {
         password: await bcrypt.hash(password, 10),
         restaurantName,
         outletName,
+        address, // Add this
+        contactNumber, // Add this
+        location: { // Add this
+          type: 'Point',
+          coordinates: [parseFloat(longitude), parseFloat(latitude)]
+        },
         isVerified: false,  
         otp: {
           code: otp,
